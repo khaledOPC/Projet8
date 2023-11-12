@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <h2>Détails du produit</h2>
+
+        <!-- Produit principal -->
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="image_box">
+                        <figure itemprop="image" itemscope="" itemtype="https://schema.org/ImageObject" style="margin-bottom:0">
+                            <a data-reveal-id="drop_front">
+                                <img style="border-radius:10px;margin-bottom:0.5rem;" class="product_image" src="{{ product.image_url }}" alt="{{ product.name }}" itemprop="thumbnail" loading="lazy">
+                            </a>
+                        </figure>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">{{ product.name }}</h4>
+                        <p class="card-text">Nutri-Score: {{ product.nutriscore }}</p>
+                        <p class="card-text">Nova-Score: {{ product.novascore }}</p>
+                        <p class="card-text">Catégorie: {{ product.category.name }}</p>
+                        <p class="card-text">Marque: {{ product.brand.name }}</p>
+                        <p class="card-text">Magasins:
+                            {% for store in product.stores.all %}
+                                {{ store.name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        <h5>Valeurs nutritionnelles pour 100g :</h5>
+                        <p>Énergie: {{ product.nutrition_data.energy|default:"N/A" }} kcal</p>
+                        <p>Lipides: {{ product.nutrition_data.fats|default:"N/A" }} g</p>
+                        <p>Acides gras saturés: {{ product.nutrition_data.saturated_fats|default:"N/A" }} g</p>
+                        <p>Glucides: {{ product.nutrition_data.carbohydrates|default:"N/A" }} g</p>
+                        <p>Sucres: {{ product.nutrition_data.sugars|default:"N/A" }} g</p>
+                        <p>Protéines: {{ product.nutrition_data.proteins|default:"N/A" }} g</p>
+                        <p>Sel: {{ product.nutrition_data.salt|default:"N/A" }} g</p>
+                        <a href="{% url 'product_substitutes' product.id %}">Voir les substituts</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

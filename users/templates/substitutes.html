@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2>Substituts pour {{ product.name }}</h2>
+    {% if substitutes %}
+        <div class="row">
+            {% for substitute in substitutes %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="image_box">
+                            <figure itemprop="image" itemscope="" itemtype="https://schema.org/ImageObject" style="margin-bottom:0">
+                                <a href="{% url 'product_detail' substitute.id %}">
+                                    <img style="border-radius:10px;margin-bottom:0.5rem;" class="product_image" src="{{ substitute.image_url }}" alt="{{ substitute.name }}" itemprop="thumbnail" loading="lazy">
+                                </a>
+                            </figure>
+                        </div>
+
+                        <div class="card-body">
+                            <h4 class="card-title">{{ substitute.name }}</h4>
+                            <p class="card-text">Nutri-Score: {{ substitute.nutriscore }}</p>
+                            <p class="card-text">Nova-Score: {{ substitute.novascore }}</p>
+                            <p class="card-text">Catégorie: {{ substitute.category.name }}</p>
+                            <p class="card-text">Marque: {{ substitute.brand.name }}</p>
+                            <p class="card-text">Magasins:
+                                {% for store in substitute.stores.all %}
+                                    {{ store.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                            <a href="{% url 'add_to_favorites' substitute.id %}">Ajouter aux favoris</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Pas de substituts disponibles pour ce produit.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
