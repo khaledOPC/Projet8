@@ -1,0 +1,88 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block extra_style %}
+<link href="{% static 'css/search.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block nav %}
+ <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
+    <div class="container px-4 px-lg-5">
+       <a class="navbar-brand" href="#page-top"><i class="bi bi-piggy-bank-fill"> Pur beurre </i></i></a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                <li class="nav-item"><a class="nav-link" href="#about"><a href="{% url 'resultat' %}" class="connexion" > <i class="bi bi-person-circle" data-toggle="tooltip" title="Connexion"></i></i></a></a></li>
+                <li class="nav-item"><a class="nav-link" href="#about"><a href="{% url 'signup' %}" class="créerUnCompte" > <i class="fas fa-carrot" data-toggle="tooltip" title="Mes aliments"></i></i></a></a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-search"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#about"><a href="{% url 'search' %}" class="créerUnCompte" ><i class="bi bi-lock" data-toggle="tooltip" title="Déconexion"></i></i></a></a></li>
+            </ul>
+        </div>
+    </div>
+</nav>             
+{% endblock %}
+
+{% block header %}
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-ZF1J+8W5q3BvHz5+5J5X9dl7zF3UG3uV7DyOs/InbVtRZlOJpG7+OIOtX/eV+hAJHhT0T0gpeLcOjKJFGZ94ew==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <header class="masthead">
+                <div class="container px-4 px-lg-5 h-100">
+                    <div class="row gx-4 gx-lg-5 h-100 align-items-center justify-content-center text-center">
+                        <div class="col-lg-8 align-self-end">
+                            <h2 class="text-white font-weight-bold">Voici l'aliment recherché</h2>
+                        </div>
+                    </div>
+                </div>
+            </header>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Résultats de la recherche</h2> <!-- Titre de la section des résultats de recherche -->
+
+    {% if results %} <!-- Vérification de la présence de résultats de recherche -->
+        <div class="row"> <!-- Début du conteneur pour les produits trouvés -->
+
+            {% for product in results %} <!-- Boucle pour afficher chaque produit trouvé -->
+                <div class="col-lg-4 col-md-6 mb-4"> <!-- Définition de la grille pour chaque produit -->
+                    <div class="card h-100"> <!-- Carte contenant les détails du produit -->
+                        
+                        <div class="image_box"> <!-- Conteneur pour l'image du produit -->
+                            <figure itemprop="image" itemscope="" itemtype="https://schema.org/ImageObject" style="margin-bottom:0">
+                                <a href="{% url 'product_detail' product.id %}"> <!-- Lien vers la page de détail du produit -->
+                                    <img style="border-radius:10px;margin-bottom:0.5rem;" id="og_image" class="product_image" src="{{ product.image_url }}" width="266" height="400" alt="{{ product.name }}" itemprop="thumbnail" loading="lazy">
+                                </a>
+                            </figure>
+                        </div>
+
+                        <div class="card-body"> <!-- Corps de la carte contenant les détails du produit -->
+                            <h4 class="card-title"> <!-- Titre de la carte (nom du produit) -->
+                                {{ product.name }}
+                            </h4>
+
+                            {% if product.id in products_with_substitutes %} <!-- Vérification si le produit a des substituts disponibles -->
+                                <p class="substitute-info">Ce produit a des substituts disponibles.</p> <!-- Information affichée si des substituts sont disponibles -->
+                            {% else %}
+                                <p class="substitute-info">Ce produit n'a pas de substituts disponibles.</p> <!-- Information affichée si aucun substitut n'est disponible -->
+                            {% endif %}
+
+                            <!-- Affichage des détails du produit -->
+                            <p class="card-text">Nutri-Score: {{ product.nutriscore }}</p>
+                            <p class="card-text">Nova-Score: {{ product.novascore }}</p>
+                            <p class="card-text">Catégorie: {{ product.category.name }}</p>
+                            <p class="card-text">Marque: {{ product.brand.name }}</p>
+                            <p class="card-text">Magasins:
+                                {% for store in product.stores.all %}
+                                    {{ store.name }}{% if not forloop.last %}, {% endif %} <!-- Boucle pour lister tous les magasins où le produit est disponible -->
+                                {% endfor %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %} <!-- Fin de la boucle des produits trouvés -->
+
+        </div> <!-- Fin du conteneur pour les produits trouvés -->
+    {% else %}
+        <p>Aucun résultat trouvé.</p> <!-- Message affiché si aucun produit n'a été trouvé -->
+    {% endif %}
+</div>
+{% endblock %}
