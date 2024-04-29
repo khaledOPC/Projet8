@@ -26,7 +26,8 @@ SECRET_KEY = "django-insecure-628i1k42^1r5z@0y(qjqi(w3-h*4*(o0%zrdjf$lj00e3ieph^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['178.128.164.222','localhost','127.0.0.1']
+
 
 
 # Application definition
@@ -77,16 +78,15 @@ WSGI_APPLICATION = "webapp.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'Projet8db',
-        'USER': 'postgres',
-        'PASSWORD': 'Khaledmehdi92',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-
+            'default': {
+                        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                        'NAME': 'p10',
+                                        'USER': 'khaled',
+                                                'PASSWORD': 'djema',
+                                                        'HOST': 'localhost',
+                                                                'PORT': '5432',
+                                                                    }
+            }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -122,6 +122,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = "static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 LOGIN_REDIRECT_URL = 'home'
