@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .models import Product, Category
+from users.models import Product, Category
 from django.db.models import Q
 
 class SearchViewTestCase(TestCase):

@@ -6,6 +6,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
 from users.models import Product, Category, Brand
+from django.contrib.auth.models import User
+# Vos modèles personnalisés (remplacez 'YourApp' et 'YourModel' par les noms appropriés)
 
 class ProductPageTest(StaticLiveServerTestCase):
     @classmethod
