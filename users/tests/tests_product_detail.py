@@ -1,25 +1,25 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service  # Ajouté
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
-from users.models import Product, Category, Brand
-from django.contrib.auth.models import User
-# Vos modèles personnalisés (remplacez 'YourApp' et 'YourModel' par les noms appropriés)
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from .models import Product, Category, Brand  # Assurez-vous que les modèles sont correctement importés
 
 class ProductPageTest(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         chrome_options = Options()
-        chrome_options.add_argument("--headless")  # Runs Chrome in headless mode.
+        chrome_options.add_argument("--headless")  # Exécute Chrome en mode sans tête.
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
 
-        # Set up the Chrome service
-        chrome_service = Service(ChromeDriverManager().install())
+        # Configure le service Chrome
+        chrome_service = ChromeService(ChromeDriverManager().install())
 
-        # Now initialize the Chrome driver with the service
+        # Initialise le driver Chrome avec le service et les options
         cls.selenium = webdriver.Chrome(service=chrome_service, options=chrome_options)
         cls.selenium.implicitly_wait(10)
 
@@ -29,7 +29,7 @@ class ProductPageTest(StaticLiveServerTestCase):
         super().tearDownClass()
 
     def setUp(self):
-        # Set up the necessary elements for the test
+        # Configure les éléments nécessaires pour le test
         self.category = Category.objects.create(name="Some Category")
         self.brand = Brand.objects.create(name="Some Brand")
         self.product = Product.objects.create(
@@ -38,20 +38,21 @@ class ProductPageTest(StaticLiveServerTestCase):
             novascore=1,
             category=self.category,
             brand=self.brand,
-            # ... other fields such as image, etc. ...
+            # ... autres champs comme l'image, etc. ...
         )
 
     def test_product_detail(self):
-        # Construct the URL for the product detail page
+        # Construit l'URL pour la page de détail du produit
         product_detail_url = self.live_server_url + reverse('product_detail', kwargs={'product_id': self.product.id})
         
-        # Tell Selenium to go to that page
+        # Demande à Selenium d'aller sur cette page
         self.selenium.get(product_detail_url)
 
-        # Now, use Selenium to look for elements on the page and interact with them
-        # For example, verify that the product name is displayed correctly
+        # Utilise Selenium pour rechercher des éléments sur la page et interagir avec eux
+        # Par exemple, vérifie que le nom du produit est affiché correctement
         product_name_element = self.selenium.find_element(By.CSS_SELECTOR, "h4.card-title")
         self.assertEqual(product_name_element.text, "Test Product")
+
 
 # ... the rest of your test class ...
 
