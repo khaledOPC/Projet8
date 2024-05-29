@@ -6,3 +6,4 @@ tzdata==2023.3
 psycopg2-binary
 requests
 selenium==3.141.0
+webdriver_manager==3.5.2
