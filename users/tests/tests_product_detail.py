@@ -4,8 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from .models import Product, Category, Brand  # Assurez-vous que les modèles sont correctement importés
+from users.models import Product, Category, Brand  # Assurez-vous que les modèles sont correctement importés
 
 class ProductPageTest(StaticLiveServerTestCase):
     @classmethod
@@ -52,6 +51,7 @@ class ProductPageTest(StaticLiveServerTestCase):
         # Par exemple, vérifie que le nom du produit est affiché correctement
         product_name_element = self.selenium.find_element(By.CSS_SELECTOR, "h4.card-title")
         self.assertEqual(product_name_element.text, "Test Product")
+
 
 
 # ... the rest of your test class ...
