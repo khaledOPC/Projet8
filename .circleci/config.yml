@@ -1,23 +1,45 @@
-services:
-  db:
-    image: postgres:14.2
-    env_file:
-      - .env
+version: 2.1
 
-    ports:
-      - "5432:5432"
+jobs:
+  build-and-test:
+    docker:
+      - image: cimg/python:3.11.0
+        environment:
+          POSTGRES_USER: khaled
+          POSTGRES_PASSWORD: djema
+          POSTGRES_DB: p10
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+      - image: postgres:14.2
+        environment:
+          POSTGRES_USER: khaled
+          POSTGRES_PASSWORD: djema
+          POSTGRES_DB: p10
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install --upgrade pip
+            pip install -r requirements.txt
+      - run:
+          name: Run Migrations
+          command: |
+            . venv/bin/activate
+            python manage.py migrate
+      - run:
+          name: Run Tests
+          command: |
+            . venv/bi/activate
+            python manage.py test
 
-  web:
-    image: cimg/python:3.11.0
-    volumes:
-      - .:/app
-    working_dir: /app
-    command: >
-      sh -c "pip install --upgrade pip &&
-             pip install -r requirements.txt &&
-             python manage.py migrate &&
-             python manage.py test"
-    depends_on:
-      - db
-    env_file:
-      - .env
+workflows:
+  version: 2
+  all_jobs:
+    jobs:
+      - build-and-test
