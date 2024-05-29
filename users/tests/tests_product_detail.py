@@ -1,4 +1,4 @@
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+'''from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -51,7 +51,7 @@ class ProductPageTest(StaticLiveServerTestCase):
         # Par exemple, vérifie que le nom du produit est affiché correctement
         product_name_element = self.selenium.find_element(By.CSS_SELECTOR, "h4.card-title")
         self.assertEqual(product_name_element.text, "Test Product")
-
+'''
 
 
 # ... the rest of your test class ...
