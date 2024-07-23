@@ -32,7 +32,6 @@ jobs:
           name: Run Migrations
           command: |
             . venv/bin/activate
-            export DJANGO_SETTINGS_MODULE=webapp.settings
             python manage.py migrate
       - run:
           name: Install pytest
@@ -40,19 +39,14 @@ jobs:
             . venv/bin/activate
             pip install pytest
       - run:
-          name: Set environment variable
-          command: |
-            echo "export DJANGO_SETTINGS_MODULE=webapp.settings" >> ~/.bashrc
-            source ~/.bashrc
-      - run:
           name: Run Tests
           command: |
             . venv/bin/activate
-            export DJANGO_SETTINGS_MODULE=webapp.settings
-            pytest
+            DJANGO_SETTINGS_MODULE=webapp.settings pytest
 
 workflows:
   version: 2
   all_jobs:
     jobs:
       - build-and-test
+
