@@ -32,7 +32,7 @@ jobs:
           name: Set DJANGO_SETTINGS_MODULE and initialize WSGI
           command: |
             . venv/bin/activate
-            echo "import os" >> init_django.py
+            echo "import os" > init_django.py
             echo "os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')" >> init_django.py
             echo "os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = 'true'" >> init_django.py
             echo "from django.core.wsgi import get_wsgi_application" >> init_django.py
@@ -42,7 +42,6 @@ jobs:
           name: Run Migrations
           command: |
             . venv/bin/activate
-            export DJANGO_SETTINGS_MODULE=webapp.settings
             python manage.py migrate
       - run:
           name: Install pytest
@@ -53,7 +52,6 @@ jobs:
           name: Run Tests
           command: |
             . venv/bin/activate
-            export DJANGO_SETTINGS_MODULE=webapp.settings
             pytest
 
 workflows:
