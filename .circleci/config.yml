@@ -4,19 +4,7 @@ jobs:
   build-and-test:
     docker:
       - image: cimg/python:3.11.0
-        environment:
-          POSTGRES_USER: khaled
-          POSTGRES_PASSWORD: djema
-          POSTGRES_DB: p10
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
-      - image: postgres:14.2
-        environment:
-          POSTGRES_USER: khaled
-          POSTGRES_PASSWORD: djema
-          POSTGRES_DB: p10
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
+      - image: circleci/postgres:14.2
     working_directory: ~/repo
     steps:
       - checkout
@@ -28,6 +16,20 @@ jobs:
             pip install --upgrade pip
             pip install -r requirements.txt
       - run:
+          name: Install Chrome
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y wget unzip
+            wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+            sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+            sudo apt-get update
+            sudo apt-get install -y google-chrome-stable
+            CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)
+            wget -N https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip
+            unzip chromedriver_linux64.zip
+            sudo mv -f chromedriver /usr/bin/chromedriver
+            sudo chmod +x /usr/bin/chromedriver
+      - run:
           name: Run Migrations
           command: |
             . venv/bin/activate
@@ -36,7 +38,7 @@ jobs:
           name: Run Tests
           command: |
             . venv/bin/activate
-            python manage.py test
+            pytest
 
 workflows:
   version: 2
