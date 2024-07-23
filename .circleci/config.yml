@@ -5,6 +5,10 @@ jobs:
     docker:
       - image: cimg/python:3.9.13
       - image: postgres:14
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+          POSTGRES_PASSWORD: password
     working_directory: ~/repo
     steps:
       - checkout
@@ -39,6 +43,11 @@ jobs:
           command: |
             . venv/bin/activate
             pip install pytest
+      - run:
+          name: Set environment variable
+          command: |
+            echo "export DJANGO_SETTINGS_MODULE=webapp.settings" >> ~/.bashrc
+            source ~/.bashrc
       - run:
           name: Run Tests
           command: |
