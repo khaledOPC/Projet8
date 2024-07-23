@@ -5,8 +5,6 @@ jobs:
     docker:
       - image: cimg/python:3.9.13
     working_directory: ~/repo
-    environment:
-      DJANGO_SETTINGS_MODULE: webapp.settings  # Définir ici
     steps:
       - checkout
       - run:
@@ -31,6 +29,16 @@ jobs:
             sudo mv -f chromedriver /usr/bin/chromedriver
             sudo chmod +x /usr/bin/chromedriver
       - run:
+          name: Set DJANGO_SETTINGS_MODULE and initialize WSGI
+          command: |
+            . venv/bin/activate
+            echo "import os" >> init_django.py
+            echo "os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')" >> init_django.py
+            echo "os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = 'true'" >> init_django.py
+            echo "from django.core.wsgi import get_wsgi_application" >> init_django.py
+            echo "application = get_wsgi_application()" >> init_django.py
+            python init_django.py
+      - run:
           name: Run Migrations
           command: |
             . venv/bin/activate
@@ -41,11 +49,6 @@ jobs:
           command: |
             . venv/bin/activate
             pip install pytest
-      - run:
-          name: Set environment variable
-          command: |
-            echo "export DJANGO_SETTINGS_MODULE=webapp.settings" >> ~/.bashrc
-            source ~/.bashrc
       - run:
           name: Run Tests
           command: |
