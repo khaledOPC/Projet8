@@ -44,7 +44,7 @@ def search(request):
 
 
 
-
+@login_required
 def Connected(request):
     """
     Vue pour la page lorsque l'utilisateur est connecté.    
@@ -149,7 +149,7 @@ def profile(request):
 @login_required
 def add_to_favorites(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    Favorite.objects.create(user=request.user, product=product)
+    Favorite.objects.get_or_create(user=request.user, product=product)
     return redirect('favorites')
 
 
