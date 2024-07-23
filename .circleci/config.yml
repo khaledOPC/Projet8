@@ -5,6 +5,8 @@ jobs:
     docker:
       - image: cimg/python:3.9.13
     working_directory: ~/repo
+    environment:
+      DJANGO_SETTINGS_MODULE: webapp.settings  # Définir ici
     steps:
       - checkout
       - run:
@@ -42,11 +44,10 @@ jobs:
           name: Run Tests
           command: |
             . venv/bin/activate
-            DJANGO_SETTINGS_MODULE=webapp.settings pytest
+            pytest
 
 workflows:
   version: 2
   all_jobs:
     jobs:
       - build-and-test
-
