@@ -3,6 +3,11 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 # Vos modèles personnalisés (remplacez 'YourApp' et 'YourModel' par les noms appropriés)
 from users.models import Product, Category, Brand
+import django
+import os
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
+django.setup()
 
 class HomePageTest(TestCase):
     def test_search_form_submission(self):

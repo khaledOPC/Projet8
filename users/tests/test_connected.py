@@ -2,6 +2,11 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
+import django
+import os
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
+django.setup()
 
 class ConnectedViewTest(TestCase):
     def setUp(self):

@@ -2,6 +2,11 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from users.models import Product, Category
 from django.db.models import Q
+import django
+import os
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
+django.setup()
 
 class SearchViewTestCase(TestCase):
 

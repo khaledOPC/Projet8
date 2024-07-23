@@ -6,6 +6,11 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from users.models import Product, Category, Brand  # Assurez-vous que les modèles sont correctement importés
+import django
+import os
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
+django.setup()
 
 class ProductPageTest(StaticLiveServerTestCase):
     @classmethod

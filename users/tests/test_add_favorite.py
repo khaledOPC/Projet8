@@ -2,7 +2,11 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
 from users.models import Product, Category, Brand, Favorite
+import django
+import os
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
+django.setup()
 
 class AddToFavoritesViewTest(TestCase):
     def setUp(self):

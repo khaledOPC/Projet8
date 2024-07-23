@@ -1,5 +1,10 @@
 from django.test import TestCase, Client
 from django.urls import reverse
+import django
+import os
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
+django.setup()
 
 class HomeViewTest(TestCase):
     def setUp(self):
