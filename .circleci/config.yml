@@ -29,19 +29,18 @@ jobs:
             sudo mv -f chromedriver /usr/bin/chromedriver
             sudo chmod +x /usr/bin/chromedriver
       - run:
-          name: Set DJANGO_SETTINGS_MODULE and initialize WSGI
+          name: Setup Django
           command: |
             . venv/bin/activate
-            echo "import os" > init_django.py
-            echo "os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')" >> init_django.py
-            echo "os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = 'true'" >> init_django.py
-            echo "from django.core.wsgi import get_wsgi_application" >> init_django.py
-            echo "application = get_wsgi_application()" >> init_django.py
-            python init_django.py
+            export DJANGO_SETTINGS_MODULE=webapp.settings
+            echo "export DJANGO_SETTINGS_MODULE=webapp.settings" >> ~/.bashrc
+            python -c "import os; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings'); from django.core.wsgi import get_wsgi_application; application = get_wsgi_application()"
       - run:
           name: Run Migrations
           command: |
             . venv/bin/activate
+            source ~/.bashrc
+            export DJANGO_SETTINGS_MODULE=webapp.settings
             python manage.py migrate
       - run:
           name: Install pytest
@@ -52,6 +51,8 @@ jobs:
           name: Run Tests
           command: |
             . venv/bin/activate
+            source ~/.bashrc
+            export DJANGO_SETTINGS_MODULE=webapp.settings
             pytest
 
 workflows:
