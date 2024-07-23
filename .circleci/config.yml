@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build-and-test:
     docker:
-      - image: cimg/python:3.11
+      - image: cimg/python:3.9.13
       - image: postgres:14
     working_directory: ~/repo
     steps:
@@ -19,14 +19,26 @@ jobs:
           name: Install Chrome and Chromedriver
           command: |
             sudo apt-get update
+            sudo apt-get install -y wget unzip
+            wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+            sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+            sudo apt-get update
             sudo apt-get install -y google-chrome-stable
-            sudo apt-get install -y chromium-chromedriver
-            sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+            CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)
+            wget -N https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip
+            unzip chromedriver_linux64.zip
+            sudo mv -f chromedriver /usr/bin/chromedriver
+            sudo chmod +x /usr/bin/chromedriver
       - run:
           name: Run Migrations
           command: |
             . venv/bin/activate
             python manage.py migrate
+      - run:
+          name: Install pytest
+          command: |
+            . venv/bin/activate
+            pip install pytest
       - run:
           name: Run Tests
           command: |
