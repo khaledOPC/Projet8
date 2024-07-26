@@ -34,12 +34,11 @@ jobs:
             . venv/bin/activate
             export DJANGO_SETTINGS_MODULE=webapp.settings
             echo "export DJANGO_SETTINGS_MODULE=webapp.settings" >> ~/.bashrc
-            python -c "import os; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings'); from django.core.wsgi import get_wsgi_application; application = get_wsgi_application()"
+            python -c "import os; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings'); import django; django.setup()"
       - run:
           name: Run Migrations
           command: |
             . venv/bin/activate
-            source ~/.bashrc
             python manage.py migrate
       - run:
           name: Install pytest
