@@ -58,29 +58,21 @@ class ProductPageTest(StaticLiveServerTestCase):
         product_name_element = self.selenium.find_element(By.CSS_SELECTOR, "h4.card-title")
         self.assertEqual(product_name_element.text, "Test Product")
 
-
-
 # ... the rest of your test class ...
-
 
         # Ici, vous pouvez ajouter plus d'interactions ou de vérifications, comme cliquer sur un bouton, remplir un formulaire, etc.
 
         # NOTE : Assurez-vous que les sélecteurs CSS/ID/Class utilisés pour trouver des éléments correspondent à ceux de votre code HTML réel.
 
-
-
 '''
-Test fonctionnel comme un parcour connexion , recherche sauvegarde etc..
-Pas oblgié de chercher une page on peut chercher à cliquer sur un bouton ou un
-lien par exemple
-Eviter de toucher à la BDD
+Test fonctionnel comme un parcour connexion, recherche, sauvegarde, etc.
+Pas obligé de chercher une page on peut chercher à cliquer sur un bouton ou un
+lien par exemple.
+Éviter de toucher à la BDD
 '''
 
-
-
 '''
-tester qu'on est bien connecter et qu'on puisse bien s'inscire avec 'mon compte' 
-Supprimer l'utilisateur pour clean et pas avoir un compte deja existant quand on
-test encore
-
+Tester qu'on est bien connecté et qu'on puisse bien s'inscrire avec 'mon compte'.
+Supprimer l'utilisateur pour clean et pas avoir un compte déjà existant quand on
+test encore.
 '''
