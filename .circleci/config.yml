@@ -33,8 +33,7 @@ jobs:
           command: |
             . venv/bin/activate
             export DJANGO_SETTINGS_MODULE=webapp.settings
-            echo "export DJANGO_SETTINGS_MODULE=webapp.settings" >> ~/.bashrc
-            python -c "import os; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings'); import django; django.setup()"
+            python -c "import os; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings'); import django; django.setup();"
       - run:
           name: Run Migrations
           command: |
