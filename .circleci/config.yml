@@ -33,7 +33,13 @@ jobs:
           command: |
             . venv/bin/activate
             export DJANGO_SETTINGS_MODULE=webapp.settings
-            python -c "import os; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings'); import django; django.setup();"
+            echo "DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE"  # Ajout de cette ligne pour vérifier la variable d'environnement
+            python -c "import os; print('DJANGO_SETTINGS_MODULE:', os.environ.get('DJANGO_SETTINGS_MODULE')); os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings'); from django.core.wsgi import get_wsgi_application; application = get_wsgi_application()"
+      - run:
+          name: Verify SQLite
+          command: |
+            . venv/bin/activate
+            python -c "import sqlite3; print('SQLite3 Version:', sqlite3.sqlite_version)"
       - run:
           name: Run Migrations
           command: |
@@ -49,7 +55,7 @@ jobs:
           command: |
             . venv/bin/activate
             export DJANGO_SETTINGS_MODULE=webapp.settings
-            pytest
+            pytest --maxfail=3 --disable-warnings -v
 
 workflows:
   version: 2
