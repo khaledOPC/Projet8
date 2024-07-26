@@ -23,17 +23,11 @@ class ConnectedViewTest(TestCase):
         self.assertNotEqual(response.status_code, 200)
         self.assertRedirects(response, reverse('login'))  # Vérifie la redirection vers la page de connexion
 
-
     def test_connected_view_uses_correct_template(self):
         # Vérifie que la vue 'Connected' utilise le bon template
         response = self.client.get(reverse('Connected'))
+        print('Templates used:', response.templates)
         self.assertTemplateUsed(response, 'Connected.html')
-
-    def test_connected_view_with_unauthenticated_user(self):
-        # Teste l'accès à la vue 'Connected' pour un utilisateur non authentifié
-        self.client.logout()
-        response = self.client.get(reverse('Connected'))
-        self.assertNotEqual(response.status_code, 200)
 
     def test_connected_view_redirects_unauthenticated_user(self):
         # Teste si les utilisateurs non authentifiés sont redirigés
@@ -44,5 +38,6 @@ class ConnectedViewTest(TestCase):
     def test_connected_view_context_data(self):
         # Teste les données du contexte de la vue 'Connected'
         response = self.client.get(reverse('Connected'))
+        print('Context data:', response.context)
         # Vérifiez ici la présence de données spécifiques dans le contexte, si nécessaire
         # self.assertIn('clé_de_contexte', response.context)

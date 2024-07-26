@@ -4,11 +4,10 @@ import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
 django.setup()
 
-
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
-from users.models import Product, Category, Brand, Favorite
+from users.models import Product, Favorite
 
 
 class FavoritesViewTest(TestCase):
@@ -29,7 +28,6 @@ class FavoritesViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'favorites.html')
 
-
     def test_favorites_view_with_unauthenticated_user(self):
         self.client.logout()
         response = self.client.get(reverse('favorites'))
@@ -37,9 +35,11 @@ class FavoritesViewTest(TestCase):
 
     def test_favorites_view_context(self):
         response = self.client.get(reverse('favorites'))
+        print('Favorites:', response.context.get('favorites'))
         self.assertTrue('favorites' in response.context)
 
     def test_favorites_view_empty_list(self):
         Favorite.objects.filter(user=self.user).delete()
         response = self.client.get(reverse('favorites'))
+        print('Favorites:', response.context.get('favorites'))
         self.assertEqual(len(response.context['favorites']), 0)
