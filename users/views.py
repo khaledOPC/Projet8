@@ -50,6 +50,7 @@ def Connected(request):
     Vue pour la page lorsque l'utilisateur est connecté.    
     Sert à afficher une page spécifique ou des informations spécifiques lorsque l'utilisateur est connecté.
     """
+    print('Connected view accessed')  # Ligne de débogage
     return render(request, 'Connected.html')
 
 
@@ -156,4 +157,5 @@ def add_to_favorites(request, product_id):
 @login_required
 def favorites(request):
     user_favorites = Favorite.objects.filter(user=request.user)
+    print('Favorites:', user_favorites)  # Ligne de débogage
     return render(request, 'favorites.html', {'favorites': user_favorites})
