@@ -1,4 +1,4 @@
-"""from django.test import TestCase, Client
+from django.test import TestCase, Client
 from django.urls import reverse
 from users.models import Product, Category
 from django.db.models import Q
@@ -68,4 +68,3 @@ class SearchViewTestCase(TestCase):
         
         self.assertFalse(substitutes_exist_for_non_substitute)
 
-"""
