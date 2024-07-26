@@ -9,7 +9,6 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 
-
 class ConnectedViewTest(TestCase):
     def setUp(self):
         # Création et connexion d'un utilisateur de test
@@ -21,7 +20,7 @@ class ConnectedViewTest(TestCase):
         self.client.logout()
         response = self.client.get(reverse('Connected'))
         self.assertNotEqual(response.status_code, 200)
-        self.assertRedirects(response, reverse('login'))  # Vérifie la redirection vers la page de connexion
+        self.assertRedirects(response, f"{reverse('login')}?next={reverse('Connected')}")
 
     def test_connected_view_uses_correct_template(self):
         # Vérifie que la vue 'Connected' utilise le bon template

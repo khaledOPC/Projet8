@@ -9,7 +9,6 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from users.models import Product, Favorite
 
-
 class FavoritesViewTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', password='12345')
@@ -35,11 +34,17 @@ class FavoritesViewTest(TestCase):
 
     def test_favorites_view_context(self):
         response = self.client.get(reverse('favorites'))
-        print('Favorites:', response.context.get('favorites'))
-        self.assertTrue('favorites' in response.context)
+        if response.context:
+            print('Favorites:', response.context.get('favorites'))
+        else:
+            print('Response has no context')
+        self.assertTrue(response.context and 'favorites' in response.context)
 
     def test_favorites_view_empty_list(self):
         Favorite.objects.filter(user=self.user).delete()
         response = self.client.get(reverse('favorites'))
-        print('Favorites:', response.context.get('favorites'))
+        if response.context:
+            print('Favorites:', response.context.get('favorites'))
+        else:
+            print('Response has no context')
         self.assertEqual(len(response.context['favorites']), 0)
