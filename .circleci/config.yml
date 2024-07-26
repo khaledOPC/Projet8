@@ -32,7 +32,7 @@ jobs:
           name: Setup Django
           command: |
             . venv/bin/activate
-            set DJANGO_SETTINGS_MODULE=webapp.settings
+            export DJANGO_SETTINGS_MODULE=webapp.settings
             echo "DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE"  # Ajout de cette ligne pour vérifier la variable d'environnement
             python -c "import os; print('DJANGO_SETTINGS_MODULE:', os.environ.get('DJANGO_SETTINGS_MODULE')); os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings'); from django.core.wsgi import get_wsgi_application; application = get_wsgi_application()"
       - run:
@@ -54,7 +54,7 @@ jobs:
           name: Run Tests
           command: |
             . venv/bin/activate
-            set DJANGO_SETTINGS_MODULE=webapp.settings
+            export DJANGO_SETTINGS_MODULE=webapp.settings
             pytest --maxfail=3 --disable-warnings -v
 
 workflows:
