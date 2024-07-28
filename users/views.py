@@ -47,8 +47,7 @@ def search(request):
 @login_required
 def Connected(request):
     """
-    Vue pour la page lorsque l'utilisateur est connecté.    
-    Sert à afficher une page spécifique ou des informations spécifiques lorsque l'utilisateur est connecté.
+    Vue pour la page lorsque l'utilisateur est connecté.
     """
     print('Connected view accessed')  # Ligne de débogage
     return render(request, 'Connected.html')
