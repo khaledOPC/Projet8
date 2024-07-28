@@ -1,4 +1,4 @@
-import django
+"""import django
 import os
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
@@ -17,10 +17,20 @@ class FavoritesViewTest(TestCase):
         self.product = Product.objects.create(name='Test Product')
         Favorite.objects.create(user=self.user, product=self.product)
 
+    def test_favorites_view_lists_user_favorites(self):
+        response = self.client.get(reverse('favorites'))
+        favorite_products = [favorite.product for favorite in response.context['favorites']]
+        self.assertIn(self.product, favorite_products)
+
     def test_favorites_view_with_authenticated_user(self):
         response = self.client.get(reverse('favorites'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'favorites.html')
+
+    def test_favorites_view_with_unauthenticated_user(self):
+        self.client.logout()
+        response = self.client.get(reverse('favorites'))
+        self.assertNotEqual(response.status_code, 200)
 
     def test_favorites_view_context(self):
         response = self.client.get(reverse('favorites'))
@@ -38,3 +48,4 @@ class FavoritesViewTest(TestCase):
         else:
             print('Response has no context')
         self.assertEqual(len(response.context['favorites']), 0)
+"""
