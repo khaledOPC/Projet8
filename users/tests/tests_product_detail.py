@@ -1,4 +1,4 @@
-import django
+'''import django
 import os
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
@@ -67,15 +67,4 @@ class ProductPageTest(StaticLiveServerTestCase):
 
         # NOTE : Assurez-vous que les sélecteurs CSS/ID/Class utilisés pour trouver des éléments correspondent à ceux de votre code HTML réel.
 
-'''
-Test fonctionnel comme un parcour connexion, recherche, sauvegarde, etc.
-Pas obligé de chercher une page on peut chercher à cliquer sur un bouton ou un
-lien par exemple.
-Éviter de toucher à la BDD
-'''
-
-'''
-Tester qu'on est bien connecté et qu'on puisse bien s'inscrire avec 'mon compte'.
-Supprimer l'utilisateur pour clean et pas avoir un compte déjà existant quand on
-test encore.
 '''
