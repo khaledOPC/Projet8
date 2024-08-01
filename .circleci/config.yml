@@ -15,7 +15,7 @@ jobs:
             pip install --upgrade pip
             pip install -r requirements.txt
       - run:
-          name: Install Chrome
+          name: Install Stable Chrome
           command: |
             sudo apt-get update
             sudo apt-get install -y wget unzip
@@ -24,7 +24,7 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y google-chrome-stable
       - run:
-          name: Verify Chrome Installation
+          name: Verify Chrome Version
           command: google-chrome --version
       - run:
           name: Setup Django

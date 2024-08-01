@@ -9,7 +9,7 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from users.models import Product, Category, Brand  # Assurez-vous que les modèles sont correctement importés
 
-# Configure Django settings
+# Configure les paramètres de Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
 django.setup()
 
@@ -37,7 +37,7 @@ class ProductPageTest(StaticLiveServerTestCase):
         super().tearDownClass()
 
     def setUp(self):
-        # Créer des instances de test pour les modèles nécessaires
+        # Configure les éléments nécessaires pour le test
         self.category = Category.objects.create(name="Some Category")
         self.brand = Brand.objects.create(name="Some Brand")
         self.product = Product.objects.create(
@@ -46,20 +46,21 @@ class ProductPageTest(StaticLiveServerTestCase):
             novascore=1,
             category=self.category,
             brand=self.brand,
-            # Ajoutez d'autres champs nécessaires ici, comme les images
+            # ... autres champs comme l'image, etc. ...
         )
 
     def test_product_detail(self):
-        # Construire l'URL pour la page de détail du produit
+        # Construit l'URL pour la page de détail du produit
         product_detail_url = self.live_server_url + reverse('product_detail', kwargs={'product_id': self.product.id})
         
-        # Naviguer vers la page de détail du produit avec Selenium
+        # Demande à Selenium d'aller sur cette page
         self.selenium.get(product_detail_url)
 
-        # Vérifier que le nom du produit est affiché correctement sur la page
+        # Utilise Selenium pour rechercher des éléments sur la page et interagir avec eux
+        # Par exemple, vérifie que le nom du produit est affiché correctement
         product_name_element = self.selenium.find_element(By.CSS_SELECTOR, "h4.card-title")
         self.assertEqual(product_name_element.text, "Test Product")
 
-        # Ajoutez ici d'autres interactions ou vérifications comme nécessaire
-        # Par exemple, vérifier la présence d'autres éléments ou leur contenu.
+        # Ici, vous pouvez ajouter plus d'interactions ou de vérifications, comme cliquer sur un bouton, remplir un formulaire, etc.
 
+        # NOTE : Assurez-vous que les sélecteurs CSS/ID/Class utilisés pour trouver des éléments correspondent à ceux de votre code HTML réel.
