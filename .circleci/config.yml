@@ -14,13 +14,17 @@ jobs:
             . venv/bin/activate
             pip install --upgrade pip
             pip install -r requirements.txt
+            # Assurez-vous que webdriver-manager est à jour
+            python -m pip install webdriver-manager --upgrade
+            # Installez packaging si ce n'est pas déjà fait
+            python -m pip install packaging
       - run:
-          name: Install Stable Chrome
+          name: Install Specific Stable Chrome Version
           command: |
             sudo apt-get update
             sudo apt-get install -y wget unzip
             wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-            sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+            sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
             sudo apt-get update
             sudo apt-get install -y google-chrome-stable
       - run:
