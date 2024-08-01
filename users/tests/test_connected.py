@@ -1,4 +1,4 @@
-"""import django
+import django
 import os
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
@@ -40,4 +40,3 @@ class ConnectedViewTest(TestCase):
         print('Context data:', response.context)
         # Vérifiez ici la présence de données spécifiques dans le contexte, si nécessaire
         # self.assertIn('clé_de_contexte', response.context)
-"""

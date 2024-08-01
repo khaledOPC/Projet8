@@ -1,4 +1,4 @@
-"""import django
+import django
 import os
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
@@ -48,4 +48,3 @@ class FavoritesViewTest(TestCase):
         else:
             print('Response has no context')
         self.assertEqual(len(response.context['favorites']), 0)
-"""
