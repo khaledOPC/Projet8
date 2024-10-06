@@ -22,10 +22,9 @@ La couverture de code est une mesure utilisée pour décrire le degré auquel le
 ### Installation de Coverage.py
 Pour utiliser `Coverage.py`, commencez par l'installer via `pip` :
 
-```bash
-pip install coverage
-coverage run -m pytest
-coverage report
+- pip install coverage
+- coverage run -m pytest
+- coverage report
 
 ## Défis rencontrés et solutions
 
@@ -56,7 +55,5 @@ coverage report
 ## Comment Contribuer
 Les contributions sont les bienvenues ! Si vous trouvez un bug ou avez une suggestion d'amélioration, n'hésitez pas à soumettre une `issue` ou une `pull request` avec une description claire des changements proposés.
 
-## Auteur
-Développé par **[Votre Nom]** dans le cadre d'un projet d'apprentissage sur la gestion des produits alimentaires avec Django et Python.
 
 Merci d'avoir utilisé cette application ! 
