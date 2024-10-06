@@ -21,25 +21,22 @@ class SearchViewTestCase(TestCase):
         self.search_url = reverse('search')
         
     def test_search_view_uses_correct_template(self):
+        # Teste si la vue utilise le bon template
         response = self.client.get(self.search_url, {'query': 'Test'})
         self.assertTemplateUsed(response, 'search.html')
         
     def test_search_view_with_query(self):
+        # Teste la recherche avec une requête
         response = self.client.get(self.search_url, {'query': 'Test'})
-        self.assertEqual(len(response.context['results']), 50)  # La limite doit être de 50
-        self.assertIn(self.products[0], response.context['results'])
+        self.assertEqual(response.context['product'].name, 'Test Product 0')  # Vérifie le premier produit retourné
         
     def test_search_view_without_query(self):
+        # Teste la recherche sans requête
         response = self.client.get(self.search_url)
-        self.assertEqual(len(response.context['results']), 50)  # La limite doit être de 50
-        self.assertIn(self.products[0], response.context['results'])
+        self.assertIsNone(response.context['product'])  # Aucune requête ne devrait retourner None pour le produit
         
-    def test_search_view_results_limit(self):
-        response = self.client.get(self.search_url, {'query': 'Test'})
-        self.assertEqual(len(response.context['results']), 50)  # La limite doit être de 50
-    
-
-    def test_search_view_products_with_substitutes(self):
+    def test_search_view_substitutes_displayed(self):
+        # Teste l'affichage des substituts
         category = Category.objects.create(name='TestCategory')
         
         original_product = Product.objects.create(
@@ -48,18 +45,19 @@ class SearchViewTestCase(TestCase):
         substitute_product = Product.objects.create(
             name='Substitute Product', category=category, nutriscore='B', novascore='4')
         
+        response = self.client.get(reverse('search'), {'query': 'Original'})
+        
+        # Vérifie si les substituts sont retournés correctement
+        self.assertEqual(len(response.context['substitutes']), 1)
+        self.assertIn(substitute_product, response.context['substitutes'])
+        
+    def test_search_view_no_substitutes_for_better_nutriscore(self):
+        # Teste qu'aucun substitut n'est retourné pour un produit avec un meilleur Nutri-Score
+        category = Category.objects.create(name='TestCategory')
+        
         non_substitute_product = Product.objects.create(
             name='Non Substitute Product', category=category, nutriscore='A', novascore='1')
         
-        response = self.client.get(reverse('search'), {'query': 'Original'})
+        response = self.client.get(self.search_url, {'query': 'Non Substitute'})
         
-        self.assertTrue(original_product.substitutes_exists())
-        
-        substitutes_exist_for_non_substitute = Product.objects.filter(
-            category=non_substitute_product.category
-        ).exclude(id=non_substitute_product.id).filter(
-            Q(nutriscore__lt=non_substitute_product.nutriscore) | Q(novascore__lt=non_substitute_product.novascore)
-        ).exists()
-        
-        self.assertFalse(substitutes_exist_for_non_substitute)
-
+        self.assertEqual(len(response.context['substitutes']), 0)

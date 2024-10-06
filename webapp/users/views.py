@@ -13,6 +13,7 @@ from .models import Product
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from .models import Favorite, Product
+from django.contrib import messages  # Pour afficher les messages d'erreur
 
 def home(request):
     """
@@ -24,23 +25,24 @@ def home(request):
 
 def search(request):
     """
-    Vue pour la recherche de produits.
-    Exécute une recherche sur les produits basée sur la requête de l'utilisateur, puis renvoie les résultats.
-    Si aucun mot-clé n'est fourni, renvoie tous les produits.
+    Vue pour la recherche d'un produit.
+    Exécute une recherche basée sur la requête de l'utilisateur et affiche le produit principal avec 5 substituts.
     """
     query = request.GET.get('query')  # Extraction de la requête de recherche de l'utilisateur
     if query:
-        results = Product.objects.filter(name__icontains=query)  # Recherche des produits correspondant à la requête
+        product = Product.objects.filter(name__icontains=query).first()  # Recherche du premier produit correspondant
     else:
-        results = Product.objects.all()  # Si aucune requête n'est fournie, renvoie tous les produits
-    results = results[:50]  # Limite les résultats à 50 produits
-    products_with_substitutes = []  # Liste pour stocker les produits ayant des substituts disponibles
-    for product in results:  # Pour chaque produit dans les résultats
-        if product.nutriscore is not None and product.novascore is not None:  # Si le produit a des scores nutritionnels
-            # Recherche des produits substituts et ajout à la liste si existant
-            if product.substitutes_exists():
-                products_with_substitutes.append(product.id)    
-    return render(request, 'search.html', {'results': results, 'products_with_substitutes': products_with_substitutes})
+        product = None  # Si aucune requête n'est fournie, ne renvoie aucun produit
+
+    # Récupération des substituts s'il y a un produit trouvé
+    substitutes = []
+    if product and product.nutriscore is not None and product.novascore is not None:
+        substitutes = Product.objects.filter(category=product.category).exclude(id=product.id).filter(
+            Q(nutriscore__lt=product.nutriscore) | Q(novascore__lt=product.novascore)).order_by('nutriscore', 'novascore')[:8]
+    
+    return render(request, 'search.html', {'product': product, 'substitutes': substitutes})
+
+
 
 
 
@@ -65,9 +67,11 @@ def product_detail(request, product_id):
         nutrition = None  # Si aucune donnée nutritionnelle, assignation à None
     context = {
         'product': product,  # Assignation du produit au contexte
-        'nutrition_data': nutrition  # Assignation des données nutritionnelles au contexte
+        'nutrition_data': nutrition,  # Assignation des données nutritionnelles au contexte
+        'product_url': product.url  # Ajout de l'URL d'Open Food Facts au contexte
     }
     return render(request, 'product_detail.html', context)
+
 
 
 def product_substitutes(request, product_id):
@@ -84,6 +88,8 @@ def product_substitutes(request, product_id):
     # Recherche de substituts et ordonnancement par scores
     context = {'substitutes': substitutes}  # Assignation des substituts au contexte
     return render(request, 'substitutes.html', context)  # Renvoie la page avec les substituts trouvés
+
+
 
 
 
@@ -121,6 +127,38 @@ def resultat(request):
         form = AuthenticationForm()
     return render(request, 'resultat.html', {'form': form})
 
+
+# Vue pour gérer l'inscription des utilisateurs
+def signup(request):
+    """
+    Gère l'inscription des utilisateurs.
+    Crée un nouvel utilisateur avec les données fournies, 
+    et si l'inscription est réussie, connecte l'utilisateur et le redirige vers la page d'accueil.
+    """
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            # Vérifie si le mot de passe est bien renseigné
+            password = form.cleaned_data.get('password1')
+            if not password:
+                # Affiche un message d'erreur si le mot de passe est manquant
+                messages.error(request, "Le mot de passe est requis pour créer un compte.")
+                return render(request, 'signup.html', {'form': form})
+            
+            # Enregistre le nouvel utilisateur
+            form.save()
+            username = form.cleaned_data.get('username')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('home')
+    else:
+        form = UserCreationForm()
+    return render(request, 'signup.html', {'form': form})
+
+
+
+
+
 # Vue pour gérer l'inscription des utilisateurs
 def signup(request):
     """
@@ -148,12 +186,37 @@ def profile(request):
 
 @login_required
 def add_to_favorites(request, product_id):
+    """
+    Vue pour ajouter un produit aux favoris d'un utilisateur.
+    """
     product = get_object_or_404(Product, id=product_id)
-    Favorite.objects.get_or_create(user=request.user, product=product)
+    # On vérifie que le produit n'est pas déjà dans les favoris de cet utilisateur
+    favorite, created = Favorite.objects.get_or_create(user=request.user, product=product)
+    if created:
+        messages.success(request, f"Le produit {product.name} a été ajouté à vos favoris.")
+    else:
+        messages.info(request, f"Le produit {product.name} est déjà dans vos favoris.")
     return redirect('favorites')
+
 
 
 @login_required
 def favorites(request):
-    user_favorites = Favorite.objects.filter(user=request.user)
+    """
+    Affiche les produits favoris de l'utilisateur connecté.
+    """
+    user_favorites = Favorite.objects.filter(user=request.user)  # Récupère les favoris uniquement pour l'utilisateur connecté
     return render(request, 'favorites.html', {'favorites': user_favorites})
+
+
+@login_required
+def remove_favorite(request, product_id):
+    """
+    Supprime un produit des favoris de l'utilisateur connecté.
+    """
+    product = get_object_or_404(Product, id=product_id)
+    favorite = Favorite.objects.filter(user=request.user, product=product)
+    if favorite.exists():
+        favorite.delete()
+        messages.success(request, f"Le produit {product.name} a été retiré de vos favoris.")
+    return redirect('favorites')

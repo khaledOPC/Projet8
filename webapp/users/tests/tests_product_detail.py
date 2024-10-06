@@ -1,35 +1,43 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service  # Ajouté
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
+import django
+import os
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 from users.models import Product, Category, Brand
-from django.contrib.auth.models import User
-# Vos modèles personnalisés (remplacez 'YourApp' et 'YourModel' par les noms appropriés)
+
+# Configure les paramètres de Django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
+django.setup()
 
 class ProductPageTest(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        # Configurer les options de Chrome
         chrome_options = Options()
-        chrome_options.add_argument("--headless")  # Runs Chrome in headless mode.
+        chrome_options.add_argument("--headless")  # Exécute Chrome en mode sans tête.
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
 
-        # Set up the Chrome service
-        chrome_service = Service(ChromeDriverManager().install())
-
-        # Now initialize the Chrome driver with the service
+        # Utilisation de webdriver_manager pour installer la version correcte de ChromeDriver
+        chrome_service = ChromeService(ChromeDriverManager().install())
+        
+        # Initialise le driver Chrome avec le service et les options
         cls.selenium = webdriver.Chrome(service=chrome_service, options=chrome_options)
-        cls.selenium.implicitly_wait(10)
+        cls.selenium.implicitly_wait(10)  # Attente implicite pour trouver les éléments
 
     @classmethod
     def tearDownClass(cls):
+        # Quitter le navigateur après les tests
         cls.selenium.quit()
         super().tearDownClass()
 
     def setUp(self):
-        # Set up the necessary elements for the test
+        # Configure les éléments nécessaires pour le test
         self.category = Category.objects.create(name="Some Category")
         self.brand = Brand.objects.create(name="Some Brand")
         self.product = Product.objects.create(
@@ -38,42 +46,25 @@ class ProductPageTest(StaticLiveServerTestCase):
             novascore=1,
             category=self.category,
             brand=self.brand,
-            # ... other fields such as image, etc. ...
+            url="https://fr.openfoodfacts.org/produit/1234567890/test-product"  # URL fictive pour le test
         )
 
     def test_product_detail(self):
-        # Construct the URL for the product detail page
+        # Construit l'URL pour la page de détail du produit
         product_detail_url = self.live_server_url + reverse('product_detail', kwargs={'product_id': self.product.id})
         
-        # Tell Selenium to go to that page
+        # Demande à Selenium d'aller sur cette page
         self.selenium.get(product_detail_url)
 
-        # Now, use Selenium to look for elements on the page and interact with them
-        # For example, verify that the product name is displayed correctly
-        product_name_element = self.selenium.find_element(By.CSS_SELECTOR, "h4.card-title")
+        # Vérification de l'affichage du nom du produit dans la bannière
+        product_name_element = self.selenium.find_element(By.CSS_SELECTOR, "h1")
         self.assertEqual(product_name_element.text, "Test Product")
 
-# ... the rest of your test class ...
+        # Vérification de l'affichage du Nutri-Score
+        nutriscore_element = self.selenium.find_element(By.CSS_SELECTOR, ".row .col-lg-6.text-center div")
+        self.assertEqual(nutriscore_element.text, "A")
 
+        # Vérification de la présence du lien vers Open Food Facts
+        openfood_link = self.selenium.find_element(By.LINK_TEXT, "Voir le produit sur Open Food Facts")
+        self.assertEqual(openfood_link.get_attribute("href"), "https://fr.openfoodfacts.org/produit/1234567890/test-product")
 
-        # Ici, vous pouvez ajouter plus d'interactions ou de vérifications, comme cliquer sur un bouton, remplir un formulaire, etc.
-
-        # NOTE : Assurez-vous que les sélecteurs CSS/ID/Class utilisés pour trouver des éléments correspondent à ceux de votre code HTML réel.
-
-
-
-'''
-Test fonctionnel comme un parcour connexion , recherche sauvegarde etc..
-Pas oblgié de chercher une page on peut chercher à cliquer sur un bouton ou un
-lien par exemple
-Eviter de toucher à la BDD
-'''
-
-
-
-'''
-tester qu'on est bien connecter et qu'on puisse bien s'inscire avec 'mon compte' 
-Supprimer l'utilisateur pour clean et pas avoir un compte deja existant quand on
-test encore
-
-'''

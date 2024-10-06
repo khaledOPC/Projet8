@@ -1,29 +1,24 @@
-"""
-URL configuration for webapp project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
+from django.contrib import messages
+from django.shortcuts import redirect
+
 import webpage
 import users
 from webpage import views
 from users import views
 from users.views import add_to_favorites, favorites
 
+# Personnalisation de la vue de déconnexion pour gérer les redirections et afficher un message.
+def custom_logout_view(request):
+    if request.user.is_authenticated:
+        auth_views.LogoutView.as_view()(request)
+    else:
+        messages.error(request, "Vous devez vous connecter pour pouvoir vous déconnecter.")
+    return redirect('home')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -39,4 +34,5 @@ urlpatterns = [
     path('favorites/', favorites, name='favorites'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/profile/', views.profile, name='profile'),
+    path('logout/', custom_logout_view, name='logout'),  # Modification pour la déconnexion personnalisée
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
