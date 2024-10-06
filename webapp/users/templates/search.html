@@ -5,84 +5,68 @@
 <link href="{% static 'css/search.css' %}" rel="stylesheet" />
 {% endblock %}
 
-{% block nav %}
- <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
-    <div class="container px-4 px-lg-5">
-       <a class="navbar-brand" href="#page-top"><i class="bi bi-piggy-bank-fill"> Pur beurre </i></i></a>
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ms-auto my-2 my-lg-0">
-                <li class="nav-item"><a class="nav-link" href="#about"><a href="{% url 'resultat' %}" class="connexion" > <i class="bi bi-person-circle" data-toggle="tooltip" title="Connexion"></i></i></a></a></li>
-                <li class="nav-item"><a class="nav-link" href="#about"><a href="{% url 'signup' %}" class="créerUnCompte" > <i class="fas fa-carrot" data-toggle="tooltip" title="Mes aliments"></i></i></a></a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-search"></span></a></li>
-                <li class="nav-item"><a class="nav-link" href="#about"><a href="{% url 'search' %}" class="créerUnCompte" ><i class="bi bi-lock" data-toggle="tooltip" title="Déconexion"></i></i></a></a></li>
-            </ul>
-        </div>
-    </div>
-</nav>             
-{% endblock %}
-
 {% block header %}
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-ZF1J+8W5q3BvHz5+5J5X9dl7zF3UG3uV7DyOs/InbVtRZlOJpG7+OIOtX/eV+hAJHhT0T0gpeLcOjKJFGZ94ew==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-            <header class="masthead">
-                <div class="container px-4 px-lg-5 h-100">
-                    <div class="row gx-4 gx-lg-5 h-100 align-items-center justify-content-center text-center">
-                        <div class="col-lg-8 align-self-end">
-                            <h2 class="text-white font-weight-bold">Voici l'aliment recherché</h2>
-                        </div>
-                    </div>
-                </div>
-            </header>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <h2>Résultats de la recherche</h2> <!-- Titre de la section des résultats de recherche -->
+    {% if product %}
+        <!-- Partie avec fond gris et image de l'aliment au centre (image plus large) -->
+        <div class="row justify-content-center" style="background-color: #f0f0f0; padding: 30px; border-radius: 10px; margin-bottom: 20px;">
+            <div class="col-lg-8 text-center">
+                <div class="image_container" style="display: inline-block; position: relative;">
+                    <!-- Image de l'aliment plus large et ajustée -->
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" style="width: 800px; height: 200px;">
+                    <!-- Nom du produit ajusté au-dessus de l'image avec lien vers la page 'product_detail' -->
+                    <a href="{% url 'product_detail' product.id %}" style="text-decoration: none;">
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; background: rgba(0, 0, 0, 0.6); padding: 5px 20px; border-radius: 5px; font-size: 1.2rem;">
+                            {{ product.name }}
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p>Aucun résultat trouvé.</p> <!-- Message affiché si aucun produit n'a été trouvé -->
+    {% endif %}
 
-    {% if results %} <!-- Vérification de la présence de résultats de recherche -->
-        <div class="row"> <!-- Début du conteneur pour les produits trouvés -->
-
-            {% for product in results %} <!-- Boucle pour afficher chaque produit trouvé -->
-                <div class="col-lg-4 col-md-6 mb-4"> <!-- Définition de la grille pour chaque produit -->
-                    <div class="card h-100"> <!-- Carte contenant les détails du produit -->
+    <!-- Section des substituts -->
+    {% if substitutes %}
+        <h3 class="text-center">Vous pouvez remplacer cet aliment par : </h3>
+        <div class="row justify-content-center"> <!-- Conteneur pour les substituts -->
+            {% for substitute in substitutes %}
+                <div class="col-lg-3 col-md-4 mb-4"> <!-- Réduction de la largeur de la grille pour chaque substitut -->
+                    <div class="card h-100" style="position: relative; width: 150px; height: 250px;"> <!-- Carte avec taille réduite -->
                         
-                        <div class="image_box"> <!-- Conteneur pour l'image du produit -->
+                        <!-- Nova-Score en haut à droite avec une taille de police plus grande pour chaque substitut -->
+                        <div style="position: absolute; top: 5px; right: 5px; background-color: #f8f9fa; color: black; font-weight: bold; padding: 2px 5px; border-radius: 3px; font-size: 1.2rem;">
+                            {{ substitute.nutriscore }}
+                        </div>
+                        
+                        <div class="image_box"> <!-- Conteneur pour l'image de chaque substitut -->
                             <figure itemprop="image" itemscope="" itemtype="https://schema.org/ImageObject" style="margin-bottom:0">
-                                <a href="{% url 'product_detail' product.id %}"> <!-- Lien vers la page de détail du produit -->
-                                    <img style="border-radius:10px;margin-bottom:0.5rem;" id="og_image" class="product_image" src="{{ product.image_url }}" width="266" height="400" alt="{{ product.name }}" itemprop="thumbnail" loading="lazy">
+                                <a href="{% url 'product_detail' substitute.id %}"> <!-- Lien vers la page de détail du substitut -->
+                                    <img style="border-radius:5px;margin-bottom:0.3rem;" id="og_image" class="product_image" src="{{ substitute.image_url }}" width="133" height="200" alt="{{ substitute.name }}" itemprop="thumbnail" loading="lazy">
                                 </a>
                             </figure>
                         </div>
 
-                        <div class="card-body"> <!-- Corps de la carte contenant les détails du produit -->
-                            <h4 class="card-title"> <!-- Titre de la carte (nom du produit) -->
-                                {{ product.name }}
+                        <div class="card-body" style="font-size: 0.8rem;"> <!-- Corps de la carte réduit avec police plus petite -->
+                            <h4 class="card-title" style="font-size: 0.9rem;"> <!-- Titre de la carte (nom du substitut) avec police réduite -->
+                                {{ substitute.name }}
                             </h4>
-
-                            {% if product.id in products_with_substitutes %} <!-- Vérification si le produit a des substituts disponibles -->
-                                <p class="substitute-info">Ce produit a des substituts disponibles.</p> <!-- Information affichée si des substituts sont disponibles -->
-                            {% else %}
-                                <p class="substitute-info">Ce produit n'a pas de substituts disponibles.</p> <!-- Information affichée si aucun substitut n'est disponible -->
-                            {% endif %}
-
-                            <!-- Affichage des détails du produit -->
-                            <p class="card-text">Nutri-Score: {{ product.nutriscore }}</p>
-                            <p class="card-text">Nova-Score: {{ product.novascore }}</p>
-                            <p class="card-text">Catégorie: {{ product.category.name }}</p>
-                            <p class="card-text">Marque: {{ product.brand.name }}</p>
-                            <p class="card-text">Magasins:
-                                {% for store in product.stores.all %}
-                                    {{ store.name }}{% if not forloop.last %}, {% endif %} <!-- Boucle pour lister tous les magasins où le produit est disponible -->
-                                {% endfor %}
-                            </p>
+                        </div>
+                        
+                        <!-- Bouton pour sauvegarder chaque substitut -->
+                        <div style="text-align: center; margin-top: 10px;">
+                            <a href="{% url 'add_to_favorites' substitute.id %}" class="btn btn-primary">Sauvegarder</a>
                         </div>
                     </div>
                 </div>
-            {% endfor %} <!-- Fin de la boucle des produits trouvés -->
-
-        </div> <!-- Fin du conteneur pour les produits trouvés -->
+            {% endfor %}
+        </div>
     {% else %}
-        <p>Aucun résultat trouvé.</p> <!-- Message affiché si aucun produit n'a été trouvé -->
+        <p>Aucun substitut trouvé.</p> <!-- Message affiché si aucun substitut n'a été trouvé -->
     {% endif %}
 </div>
 {% endblock %}
